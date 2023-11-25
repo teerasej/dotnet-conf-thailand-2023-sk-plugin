@@ -3,6 +3,8 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using System.Globalization;
+using Microsoft.OpenApi.Models;
+using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
 
 namespace MathPlugin
 {
@@ -16,6 +18,10 @@ namespace MathPlugin
         }
 
         [Function("Add")]
+        [OpenApiOperation(operationId: "Add", tags: new[] { "Math" }, Summary = "Add two numbers", Description = "This function adds two numbers.")]
+        [OpenApiParameter(name: "number1", In = ParameterLocation.Query, Required = true, Type = typeof(double), Summary = "First number", Description = "The first number to add.")]
+        [OpenApiParameter(name: "number2", In = ParameterLocation.Query, Required = true, Type = typeof(double), Summary = "Second number", Description = "The second number to add.")]
+        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "text/plain", bodyType: typeof(string), Summary = "The OK response", Description = "The OK response")]
         public HttpResponseData Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequestData req)
         {
             bool result1 = double.TryParse(req.Query["number1"], out double number1);
